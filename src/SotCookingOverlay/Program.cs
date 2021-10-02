@@ -7,17 +7,19 @@ namespace SotCookingOverlay
 {
 	class Program
 	{
-		static uint _transparentColor = 1234;
+		const Int32 Width = 200;
+		const Int32 Height = 100;
+		const UInt32 TransparentColor = 1234;
 
 		static async Task Main(string[] args)
 		{
 			WndProc windowProcedureDelegate = WindowProcedure;
 
-			WNDCLASSEX windowClassEx = new WNDCLASSEX
+			var windowClassEx = new WNDCLASSEX
 			{
 				cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
 				style = (int)(WinAPI.CS_HREDRAW | WinAPI.CS_VREDRAW),
-				hbrBackground = WinAPI.CreateSolidBrush(_transparentColor),
+				hbrBackground = WinAPI.CreateSolidBrush(0x7f007f),
 				cbClsExtra = 0,
 				cbWndExtra = 0,
 				hInstance = Process.GetCurrentProcess().Handle,
@@ -31,10 +33,10 @@ namespace SotCookingOverlay
 			UInt16 registerClassEx = WinAPI.RegisterClassEx(ref windowClassEx);
 
 			IntPtr hwnd = WinAPI.CreateWindowEx((int)(WinAPI.WS_EX_TOPMOST | WinAPI.WS_EX_TRANSPARENT | WinAPI.WS_EX_LAYERED), registerClassEx,
-				string.Empty, WinAPI.WS_POPUP, 0, 0, 300, 400, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
-			WinAPI.SetLayeredWindowAttributes(hwnd, _transparentColor, 0, WinAPI.LWA_COLORKEY);
-			WinAPI.ShowWindow(hwnd, 1);
-			WinAPI.UpdateWindow(hwnd);
+				string.Empty, WinAPI.WS_POPUP, 0, 0, Width, Height, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
+			WinAPI.SetLayeredWindowAttributes(hwnd, TransparentColor, 0, WinAPI.LWA_COLORKEY);
+			WinAPI.ShowWindow(hwnd, WinAPI.SW_NORMAL);
+			//WinAPI.UpdateWindow(hwnd);
 
 			while (WinAPI.GetMessage(out var msg, IntPtr.Zero, 0, 0) != 0)
 			{
@@ -60,13 +62,21 @@ namespace SotCookingOverlay
 
 					IntPtr hdc = WinAPI.BeginPaint(hWnd, out var ps);
 					WinAPI.GetClientRect(hWnd, out var rect);
+					LOGFONT logfont = new LOGFONT
+					{
+						lfFaceName = "Comic Sans MS",
+						lfHeight = 36,
+					};
+					IntPtr hNewFont = WinAPI.CreateFontIndirect(logfont);
+					IntPtr hOldFont = WinAPI.SelectObject(hdc, hNewFont);
+					WinAPI.DeleteObject(hOldFont);
 					WinAPI.SetTextColor(hdc, 123456);
-					WinAPI. SetBkMode(hdc, WinAPI.TRANSPARENT);
+					WinAPI.SetBkMode(hdc, WinAPI.TRANSPARENT);
 					rect.Left = 40;
 					rect.Top = 10;
-					WinAPI.DrawText(hdc, "Hello World!", -1, ref rect,
-						WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
+					WinAPI.DrawText(hdc, "Hello World!", -1, ref rect, WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
 					WinAPI.EndPaint(hWnd, ref ps);
+
 					break;
 
 				case WinAPI.WM_DESTROY:

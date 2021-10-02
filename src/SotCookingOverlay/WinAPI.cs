@@ -171,6 +171,26 @@ namespace SotCookingOverlay
 		public bool fIncUpdate;
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] rgbReserved;
 	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+	public class LOGFONT
+	{
+		public int lfHeight = 0;
+		public int lfWidth = 0;
+		public int lfEscapement = 0;
+		public int lfOrientation = 0;
+		public int lfWeight = 0;
+		public byte lfItalic = 0;
+		public byte lfUnderline = 0;
+		public byte lfStrikeOut = 0;
+		public byte lfCharSet = 0;
+		public byte lfOutPrecision = 0;
+		public byte lfClipPrecision = 0;
+		public byte lfQuality = 0;
+		public byte lfPitchAndFamily = 0;
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+		public string lfFaceName = string.Empty;
+	}
 	#endregion
 
 	public class WinAPI
@@ -183,6 +203,7 @@ namespace SotCookingOverlay
 		public const UInt32 CS_VREDRAW = 1;
 		public const UInt32 CS_HREDRAW = 2;
 		public const UInt32 LWA_COLORKEY = 1;
+		public const Int32 SW_NORMAL = 1;
 		public const Int32 TRANSPARENT = 1;
 		public const Int32 DT_SINGLELINE = 0x00000020;
 		public const Int32 DT_NOCLIP = 0x00000100;
@@ -259,6 +280,16 @@ namespace SotCookingOverlay
 		[DllImport("user32.dll")]
 		public static extern int DrawText(IntPtr hdc, string lpchText, int cchText,
 			ref RECT lprc, uint dwDTFormat);
+
+		[DllImport("gdi32.dll", CharSet = CharSet.Auto)]
+		public static extern IntPtr CreateFontIndirect([In, MarshalAs(UnmanagedType.LPStruct)] LOGFONT lplf);
+
+		[DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+		public static extern IntPtr SelectObject([In] IntPtr hdc, [In] IntPtr hgdiobj);
+
+		[DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool DeleteObject([In] IntPtr hObject);
 		#endregion
 	}
 }
