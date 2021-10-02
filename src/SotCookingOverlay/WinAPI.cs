@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+/*
+ * Reference https://www.pinvoke.net
+ */
 namespace SotCookingOverlay
 {
-	//typedef unsigned short ATOM; 
+	//typedef unsigned short ATOM;
+
 	delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -23,6 +27,41 @@ namespace SotCookingOverlay
 		public string lpszMenuName;
 		public string lpszClassName;
 		public IntPtr hIconSm;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct MSG
+	{
+		IntPtr hwnd;
+		uint message;
+		UIntPtr wParam;
+		IntPtr lParam;
+		int time;
+		POINT pt;
+		int lPrivate;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct POINT
+	{
+		public int X;
+		public int Y;
+
+		public POINT(int x, int y)
+		{
+			X = x;
+			Y = y;
+		}
+
+		public static implicit operator System.Drawing.Point(POINT p)
+		{
+			return new System.Drawing.Point(p.X, p.Y);
+		}
+
+		public static implicit operator POINT(System.Drawing.Point p)
+		{
+			return new POINT(p.X, p.Y);
+		}
 	}
 
 	public class WinAPI
@@ -71,5 +110,17 @@ namespace SotCookingOverlay
 
 		[DllImport("user32.dll")]
 		public static extern bool UpdateWindow(IntPtr hWnd);
+
+		[DllImport("user32.dll")]
+		public static extern sbyte GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+		[DllImport("user32.dll")]
+		public static extern bool TranslateMessage([In] ref MSG lpMsg);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
+
+		[DllImport("user32.dll")]
+		public static extern void PostQuitMessage(int nExitCode);
 	}
 }
