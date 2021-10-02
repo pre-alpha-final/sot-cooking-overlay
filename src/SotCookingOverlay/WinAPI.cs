@@ -77,6 +77,7 @@ namespace SotCookingOverlay
 		public const UInt32 CS_HREDRAW = 2;
 		public const UInt32 COLOR_WINDOW = 5;
 		public const UInt32 COLOR_BACKGROUND = 1;
+		public const UInt32 LWA_COLORKEY = 1;
 		public const UInt32 IDC_ARROW = 32512;
 		public const UInt32 WM_DESTROY = 2;
 		public const UInt32 WM_PAINT = 0x0f;
@@ -128,5 +129,8 @@ namespace SotCookingOverlay
 
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateSolidBrush(uint crColor);
+
+		[DllImport("user32.dll")]
+		public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
 	}
 }
