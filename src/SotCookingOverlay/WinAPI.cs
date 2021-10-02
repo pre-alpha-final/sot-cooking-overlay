@@ -10,6 +10,7 @@ namespace SotCookingOverlay
 
 	delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
+	#region structs
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 	public struct WNDCLASSEX
 	{
@@ -64,26 +65,133 @@ namespace SotCookingOverlay
 		}
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RECT
+	{
+		public int Left, Top, Right, Bottom;
+
+		public RECT(int left, int top, int right, int bottom)
+		{
+			Left = left;
+			Top = top;
+			Right = right;
+			Bottom = bottom;
+		}
+
+		public RECT(System.Drawing.Rectangle r) : this(r.Left, r.Top, r.Right, r.Bottom) { }
+
+		public int X
+		{
+			get { return Left; }
+			set { Right -= (Left - value); Left = value; }
+		}
+
+		public int Y
+		{
+			get { return Top; }
+			set { Bottom -= (Top - value); Top = value; }
+		}
+
+		public int Height
+		{
+			get { return Bottom - Top; }
+			set { Bottom = value + Top; }
+		}
+
+		public int Width
+		{
+			get { return Right - Left; }
+			set { Right = value + Left; }
+		}
+
+		public System.Drawing.Point Location
+		{
+			get { return new System.Drawing.Point(Left, Top); }
+			set { X = value.X; Y = value.Y; }
+		}
+
+		public System.Drawing.Size Size
+		{
+			get { return new System.Drawing.Size(Width, Height); }
+			set { Width = value.Width; Height = value.Height; }
+		}
+
+		public static implicit operator System.Drawing.Rectangle(RECT r)
+		{
+			return new System.Drawing.Rectangle(r.Left, r.Top, r.Width, r.Height);
+		}
+
+		public static implicit operator RECT(System.Drawing.Rectangle r)
+		{
+			return new RECT(r);
+		}
+
+		public static bool operator ==(RECT r1, RECT r2)
+		{
+			return r1.Equals(r2);
+		}
+
+		public static bool operator !=(RECT r1, RECT r2)
+		{
+			return !r1.Equals(r2);
+		}
+
+		public bool Equals(RECT r)
+		{
+			return r.Left == Left && r.Top == Top && r.Right == Right && r.Bottom == Bottom;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is RECT)
+				return Equals((RECT)obj);
+			else if (obj is System.Drawing.Rectangle)
+				return Equals(new RECT((System.Drawing.Rectangle)obj));
+			return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return ((System.Drawing.Rectangle)this).GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return string.Format(System.Globalization.CultureInfo.CurrentCulture, "{{Left={0},Top={1},Right={2},Bottom={3}}}", Left, Top, Right, Bottom);
+		}
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct PAINTSTRUCT
+	{
+		public IntPtr hdc;
+		public bool fErase;
+		public RECT rcPaint;
+		public bool fRestore;
+		public bool fIncUpdate;
+		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] public byte[] rgbReserved;
+	}
+	#endregion
+
 	public class WinAPI
 	{
+		#region consts
 		public const UInt32 WS_EX_TOPMOST = 0x00000008;
 		public const UInt32 WS_EX_TRANSPARENT = 0x00000020;
 		public const UInt32 WS_EX_LAYERED = 0x80000;
 		public const UInt32 WS_POPUP = 0x80000000;
-		public const UInt32 WS_VISIBLE = 0x10000000;
-		public const UInt32 CS_USEDEFAULT = 0x80000000;
-		public const UInt32 CS_DBLCLKS = 8;
 		public const UInt32 CS_VREDRAW = 1;
 		public const UInt32 CS_HREDRAW = 2;
-		public const UInt32 COLOR_WINDOW = 5;
-		public const UInt32 COLOR_BACKGROUND = 1;
 		public const UInt32 LWA_COLORKEY = 1;
+		public const Int32 TRANSPARENT = 1;
+		public const Int32 DT_SINGLELINE = 0x00000020;
+		public const Int32 DT_NOCLIP = 0x00000100;
 		public const UInt32 IDC_ARROW = 32512;
 		public const UInt32 WM_DESTROY = 2;
 		public const UInt32 WM_PAINT = 0x0f;
-		public const UInt32 WM_LBUTTONUP = 0x0202;
-		public const UInt32 WM_LBUTTONDBLCLK = 0x0203;
+		#endregion
 
+		#region imports
 		[DllImport("user32.dll", SetLastError = true, EntryPoint = "RegisterClassEx")]
 		public static extern UInt16 RegisterClassEx([In] ref WNDCLASSEX lpWndClass);
 
@@ -132,5 +240,25 @@ namespace SotCookingOverlay
 
 		[DllImport("user32.dll")]
 		public static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr BeginPaint(IntPtr hwnd, out PAINTSTRUCT lpPaint);
+
+		[DllImport("user32.dll")]
+		public static extern bool EndPaint(IntPtr hWnd, [In] ref PAINTSTRUCT lpPaint);
+
+		[DllImport("user32.dll")]
+		public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+		[DllImport("gdi32.dll")]
+		public static extern uint SetTextColor(IntPtr hdc, int crColor);
+
+		[DllImport("gdi32.dll")]
+		public static extern int SetBkMode(IntPtr hdc, int iBkMode);
+
+		[DllImport("user32.dll")]
+		public static extern int DrawText(IntPtr hdc, string lpchText, int cchText,
+			ref RECT lprc, uint dwDTFormat);
+		#endregion
 	}
 }

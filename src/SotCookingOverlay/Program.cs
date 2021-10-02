@@ -48,6 +48,25 @@ namespace SotCookingOverlay
 			switch (msg)
 			{
 				case WinAPI.WM_PAINT:
+					// Bitmap refernce
+					//PAINTSTRUCT ps;
+					//HDC kon, pom;
+					//kon = BeginPaint(hwnd, &ps);
+					//pom = CreateCompatibleDC(kon);
+					//SelectObject(pom, this->bmp);
+					//BitBlt(kon, 0, 0, this->width, this->height, pom, 0, 0, SRCCOPY);
+					//DeleteDC(pom);
+					//EndPaint(hwnd, &ps);
+
+					IntPtr hdc = WinAPI.BeginPaint(hWnd, out var ps);
+					WinAPI.GetClientRect(hWnd, out var rect);
+					WinAPI.SetTextColor(hdc, 123456);
+					WinAPI. SetBkMode(hdc, WinAPI.TRANSPARENT);
+					rect.Left = 40;
+					rect.Top = 10;
+					WinAPI.DrawText(hdc, "Hello World!", -1, ref rect,
+						WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
+					WinAPI.EndPaint(hWnd, ref ps);
 					break;
 
 				case WinAPI.WM_DESTROY:
