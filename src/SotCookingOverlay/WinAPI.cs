@@ -66,7 +66,10 @@ namespace SotCookingOverlay
 
 	public class WinAPI
 	{
-		public const UInt32 WS_OVERLAPPEDWINDOW = 0xcf0000;
+		public const UInt32 WS_EX_TOPMOST = 0x00000008;
+		public const UInt32 WS_EX_TRANSPARENT = 0x00000020;
+		public const UInt32 WS_EX_LAYERED = 0x80000;
+		public const UInt32 WS_POPUP = 0x80000000;
 		public const UInt32 WS_VISIBLE = 0x10000000;
 		public const UInt32 CS_USEDEFAULT = 0x80000000;
 		public const UInt32 CS_DBLCLKS = 8;
@@ -74,7 +77,7 @@ namespace SotCookingOverlay
 		public const UInt32 CS_HREDRAW = 2;
 		public const UInt32 COLOR_WINDOW = 5;
 		public const UInt32 COLOR_BACKGROUND = 1;
-		public const UInt32 IDC_CROSS = 32515;
+		public const UInt32 IDC_ARROW = 32512;
 		public const UInt32 WM_DESTROY = 2;
 		public const UInt32 WM_PAINT = 0x0f;
 		public const UInt32 WM_LBUTTONUP = 0x0202;
@@ -122,5 +125,8 @@ namespace SotCookingOverlay
 
 		[DllImport("user32.dll")]
 		public static extern void PostQuitMessage(int nExitCode);
+
+		[DllImport("gdi32.dll")]
+		public static extern IntPtr CreateSolidBrush(uint crColor);
 	}
 }

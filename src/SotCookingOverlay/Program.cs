@@ -14,21 +14,22 @@ namespace SotCookingOverlay
 			WNDCLASSEX windowClassEx = new WNDCLASSEX
 			{
 				cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
-				style = (int)(WinAPI.CS_HREDRAW | WinAPI.CS_VREDRAW | WinAPI.CS_DBLCLKS), //Doubleclicks are active
-				hbrBackground = (IntPtr)WinAPI.COLOR_BACKGROUND + 1, //Black background, +1 is necessary
+				style = (int)(WinAPI.CS_HREDRAW | WinAPI.CS_VREDRAW),
+				hbrBackground = WinAPI.CreateSolidBrush(0),
 				cbClsExtra = 0,
 				cbWndExtra = 0,
 				hInstance = Process.GetCurrentProcess().Handle,
 				hIcon = IntPtr.Zero,
-				hCursor = WinAPI.LoadCursor(IntPtr.Zero, (int)WinAPI.IDC_CROSS),// Crosshair cursor;
-				lpszMenuName = null,
-				lpszClassName = "myClass",
+				hCursor = WinAPI.LoadCursor(IntPtr.Zero, (int)WinAPI.IDC_ARROW),// Crosshair cursor;
+				lpszMenuName = "lpszMenuName",
+				lpszClassName = "lpszClassName",
 				lpfnWndProc = Marshal.GetFunctionPointerForDelegate(delegWndProc),
 				hIconSm = IntPtr.Zero
 			};
 			UInt16 registerClassEx = WinAPI.RegisterClassEx(ref windowClassEx);
 
-			IntPtr hwnd = WinAPI.CreateWindowEx(0, registerClassEx, "Hello Win32", WinAPI.WS_OVERLAPPEDWINDOW | WinAPI.WS_VISIBLE, 0, 0, 300, 400, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
+			IntPtr hwnd = WinAPI.CreateWindowEx((int)(WinAPI.WS_EX_TOPMOST | WinAPI.WS_EX_TRANSPARENT | WinAPI.WS_EX_LAYERED), registerClassEx,
+				"Hello Win32", WinAPI.WS_POPUP, 0, 0, 300, 400, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
 			WinAPI.ShowWindow(hwnd, 1);
 			WinAPI.UpdateWindow(hwnd);
 
