@@ -24,9 +24,9 @@ namespace SotCookingOverlay
 			windowClassEx.lpszClassName = "myClass";
 			windowClassEx.lpfnWndProc = Marshal.GetFunctionPointerForDelegate(delegWndProc);
 			windowClassEx.hIconSm = IntPtr.Zero;
-			ushort registerClassEx = WinAPI.RegisterClassEx(ref windowClassEx);
+			UInt16 registerClassEx = WinAPI.RegisterClassEx(ref windowClassEx);
 
-			IntPtr hwnd = WinAPI.CreateWindowExModified(0, registerClassEx, "Hello Win32", WinAPI.WS_OVERLAPPEDWINDOW | WinAPI.WS_VISIBLE, 0, 0, 300, 400, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
+			IntPtr hwnd = WinAPI.CreateWindowEx(0, registerClassEx, "Hello Win32", WinAPI.WS_OVERLAPPEDWINDOW | WinAPI.WS_VISIBLE, 0, 0, 300, 400, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
 			WinAPI.ShowWindow(hwnd, 1);
 			WinAPI.UpdateWindow(hwnd);
 
