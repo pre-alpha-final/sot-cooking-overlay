@@ -10,6 +10,7 @@ namespace SotCookingOverlay
 
 		public static int MegFull => 40;
 		public static int MegRemaining { get; set; }
+		//public static string MegText => isactive terenary $"Meg: {MegRemaining}s";
 		public static string MegText => $"Meg: {MegRemaining}s";
 
 		public static async Task Tick()
@@ -19,6 +20,7 @@ namespace SotCookingOverlay
 			while (true)
 			{
 				await Task.Delay(100);
+				//handle width height here
 				var elapsedSeconds = (int)(DateTimeOffset.UtcNow - Start).TotalSeconds;
 				if (elapsedSeconds != lastElapsedSeconds)
 				{

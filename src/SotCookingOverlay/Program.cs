@@ -9,7 +9,7 @@ namespace SotCookingOverlay
 	{
 		const Int32 Width = 400;
 		const Int32 Height = 200;
-		const UInt32 TransparentColor = 0; // 0 = black since CreateCompatibleBitmap would turn it to black anyway
+		const UInt32 TransparentColor = 1234;
 		const Int32 ForegroundColor = 54321;
 		const Int32 BackgroundColor = 12345;
 
@@ -53,22 +53,27 @@ namespace SotCookingOverlay
 			{
 				case WinAPI.WM_PAINT:
 					IntPtr hDc = WinAPI.BeginPaint(hWnd, out var ps);
-					IntPtr compatibleDc = WinAPI.CreateCompatibleDC(hDc);
-					IntPtr compatibleBitmap = WinAPI.CreateCompatibleBitmap(hDc, Width, Height);
-					WinAPI.SelectObject(compatibleDc, compatibleBitmap);
+					IntPtr hCompatibleDc = WinAPI.CreateCompatibleDC(hDc);
+					IntPtr hCompatibleBitmap = WinAPI.CreateCompatibleBitmap(hDc, Width, Height);
+					IntPtr hOldBitmap = WinAPI.SelectObject(hCompatibleDc, hCompatibleBitmap);
+					IntPtr hBrush = WinAPI.CreateSolidBrush(TransparentColor);
+					var rect = new RECT(0, 0, Width, Height);
+					WinAPI.FillRect(hCompatibleDc, ref rect, hBrush);
+					WinAPI.TransparentBlt(hCompatibleDc, 0, 0, Width, Height, hCompatibleDc, 0, 0, Width, Height, TransparentColor);
 
 					var textDrawer = new TextDrawer(BackgroundColor, ForegroundColor);
-					textDrawer.DrawText(hWnd, compatibleDc, AppContext.MegText, 20, 20);
+					textDrawer.DrawText(hWnd, hCompatibleDc, AppContext.MegText, 20, 20);
 
-					/*
-					 * Last param here should be TransparentColor not 0, but CreateCompatibleBitmap above
-					 * does not support transparency, so the originally transparent regions become 0 (black)
-					 */
-					WinAPI.TransparentBlt(hDc, 0, 0, Width, Height, compatibleDc, 0, 0, Width, Height, 0);
+					WinAPI.BitBlt(hDc, 0, 0, Width, Height, hCompatibleDc, 0, 0, TernaryRasterOperations.SRCCOPY);
 					WinAPI.EndPaint(hWnd, ref ps);
-					WinAPI.DeleteDC(compatibleDc);
-					WinAPI.DeleteObject(compatibleBitmap);
+					WinAPI.DeleteDC(hCompatibleDc);
+					WinAPI.DeleteObject(hCompatibleBitmap);
+					WinAPI.DeleteObject(hOldBitmap);
+					WinAPI.DeleteObject(hBrush);
 					break;
+
+				case WinAPI.WM_ERASEBKGND:
+					return IntPtr.Zero;
 
 				case WinAPI.WM_DESTROY:
 					WinAPI.PostQuitMessage(0);
@@ -77,6 +82,7 @@ namespace SotCookingOverlay
 				default:
 					break;
 			}
+
 			return WinAPI.DefWindowProc(hWnd, msg, wParam, lParam);
 		}
 	}

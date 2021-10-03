@@ -208,6 +208,26 @@ namespace SotCookingOverlay
 		Frame = 0x400,
 		NoFrame = 0x800
 	}
+
+	public enum TernaryRasterOperations : uint
+	{
+		SRCCOPY = 0x00CC0020,
+		SRCPAINT = 0x00EE0086,
+		SRCAND = 0x008800C6,
+		SRCINVERT = 0x00660046,
+		SRCERASE = 0x00440328,
+		NOTSRCCOPY = 0x00330008,
+		NOTSRCERASE = 0x001100A6,
+		MERGECOPY = 0x00C000CA,
+		MERGEPAINT = 0x00BB0226,
+		PATCOPY = 0x00F00021,
+		PATPAINT = 0x00FB0A09,
+		PATINVERT = 0x005A0049,
+		DSTINVERT = 0x00550009,
+		BLACKNESS = 0x00000042,
+		WHITENESS = 0x00FF0062,
+		CAPTUREBLT = 0x40000000
+	}
 	#endregion
 
 	public class WinAPI
@@ -225,8 +245,9 @@ namespace SotCookingOverlay
 		public const Int32 DT_SINGLELINE = 0x00000020;
 		public const Int32 DT_NOCLIP = 0x00000100;
 		public const UInt32 IDC_ARROW = 32512;
-		public const UInt32 WM_DESTROY = 2;
 		public const UInt32 WM_PAINT = 0x0f;
+		public const UInt32 WM_ERASEBKGND = 0x14;
+		public const UInt32 WM_DESTROY = 0x02;
 		#endregion
 
 		#region imports
@@ -311,6 +332,10 @@ namespace SotCookingOverlay
 		[DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC", SetLastError = true)]
 		public static extern IntPtr CreateCompatibleDC([In] IntPtr hdc);
 
+		[DllImport("gdi32.dll", EntryPoint = "BitBlt", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, TernaryRasterOperations dwRop);
+
 		[DllImport("Msimg32.dll", EntryPoint = "TransparentBlt", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool TransparentBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidthDst, int nHeightDst, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int nWidthSrc, int nHeightSrc, uint transparentColor);
@@ -320,6 +345,9 @@ namespace SotCookingOverlay
 
 		[DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
 		public static extern bool DeleteDC([In] IntPtr hdc);
+
+		[DllImport("user32.dll")]
+		public static extern int FillRect(IntPtr hDC, [In] ref RECT lprc, IntPtr hbr);
 		#endregion
 	}
 }
