@@ -5,7 +5,7 @@ namespace SotCookingOverlay
 {
 	class Program
 	{
-		static async Task Main(string[] args)
+		static void Main(string[] args)
 		{
 			var windowProcedureWrapper = new WindowProcedureWrapper(OnPaint);
 			(WNDCLASSEX windowClassEx, ushort registerClassAtom) = WinApiHelper.RegisterWindowClass(windowProcedureWrapper.WindowProcedure);
@@ -20,7 +20,7 @@ namespace SotCookingOverlay
 
 		private static void OnPaint(IntPtr hWnd, IntPtr hDc)
 		{
-			TextDrawer textDrawer = new TextDrawer(AppContext.TextBackgroundColor, AppContext.TextForegroundColor);
+			var textDrawer = new TextDrawer(AppContext.TextBackgroundColor, AppContext.TextForegroundColor);
 			textDrawer.DrawText(hWnd, hDc, AppContext.MegText, 20, 20);
 		}
 	}

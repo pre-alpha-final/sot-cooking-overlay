@@ -8,7 +8,7 @@ namespace SotCookingOverlay
 	{
 		public static (WNDCLASSEX windowClassEx, UInt16 registerClassAtom) RegisterWindowClass(WndProc windowProcedure)
 		{
-			WNDCLASSEX windowClassEx = new WNDCLASSEX
+			var windowClassEx = new WNDCLASSEX
 			{
 				cbSize = Marshal.SizeOf(typeof(WNDCLASSEX)),
 				style = (int)(WinApiInterop.CS_HREDRAW | WinApiInterop.CS_VREDRAW),
@@ -23,14 +23,14 @@ namespace SotCookingOverlay
 				lpfnWndProc = Marshal.GetFunctionPointerForDelegate(windowProcedure),
 				hIconSm = IntPtr.Zero
 			};
-			UInt16 registerClassAtom = WinApiInterop.RegisterClassEx(ref windowClassEx);
+			ushort registerClassAtom = WinApiInterop.RegisterClassEx(ref windowClassEx);
 
 			return (windowClassEx, registerClassAtom);
 		}
 
-		public static IntPtr CreateOwnerWindow(WNDCLASSEX windowClassEx, UInt16 registerClassAtom)
+		public static IntPtr CreateOwnerWindow(WNDCLASSEX windowClassEx, ushort registerClassAtom)
 		{
-			IntPtr hWnd = WinApiInterop.CreateWindowEx((int)(WinApiInterop.WS_EX_TOPMOST | WinApiInterop.WS_EX_TRANSPARENT | WinApiInterop.WS_EX_LAYERED),
+			var hWnd = WinApiInterop.CreateWindowEx((int)(WinApiInterop.WS_EX_TOPMOST | WinApiInterop.WS_EX_TRANSPARENT | WinApiInterop.WS_EX_LAYERED),
 				registerClassAtom, AppContext.Title, WinApiInterop.WS_POPUP | WinApiInterop.WS_SYSMENU | WinApiInterop.WS_CAPTION, 0, 0, 0, 0, IntPtr.Zero,
 				IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
 			WinApiInterop.SetLayeredWindowAttributes(hWnd, AppContext.TransparentColor, 0, WinApiInterop.LWA_COLORKEY);
@@ -39,7 +39,7 @@ namespace SotCookingOverlay
 			return hWnd;
 		}
 
-		public static IntPtr CreatePopupWindow(WNDCLASSEX windowClassEx, UInt16 registerClassAtom)
+		public static IntPtr CreatePopupWindow(WNDCLASSEX windowClassEx, ushort registerClassAtom)
 		{
 			IntPtr hWnd = WinApiInterop.CreateWindowEx((int)(WinApiInterop.WS_EX_TOPMOST | WinApiInterop.WS_EX_TRANSPARENT | WinApiInterop.WS_EX_LAYERED), registerClassAtom,
 				string.Empty, WinApiInterop.WS_POPUP, 0, 0, AppContext.Width, AppContext.Height, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
@@ -51,7 +51,7 @@ namespace SotCookingOverlay
 
 		public static void MessageLoop()
 		{
-			while (WinApiInterop.GetMessage(out MSG msg, IntPtr.Zero, 0, 0) != 0)
+			while (WinApiInterop.GetMessage(out var msg, IntPtr.Zero, 0, 0) != 0)
 			{
 				WinApiInterop.TranslateMessage(ref msg);
 				WinApiInterop.DispatchMessage(ref msg);
@@ -75,12 +75,12 @@ namespace SotCookingOverlay
 			switch (msg)
 			{
 				case WinApiInterop.WM_PAINT:
-					IntPtr hDc = WinApiInterop.BeginPaint(hWnd, out var ps);
-					IntPtr hCompatibleDc = WinApiInterop.CreateCompatibleDC(hDc);
-					IntPtr hCompatibleBitmap = WinApiInterop.CreateCompatibleBitmap(hDc, AppContext.Width, AppContext.Height);
-					IntPtr hOldBitmap = WinApiInterop.SelectObject(hCompatibleDc, hCompatibleBitmap);
-					IntPtr hBrush = WinApiInterop.CreateSolidBrush(AppContext.TransparentColor);
-					RECT rect = new RECT(0, 0, AppContext.Width, AppContext.Height);
+					var hDc = WinApiInterop.BeginPaint(hWnd, out PAINTSTRUCT ps);
+					var hCompatibleDc = WinApiInterop.CreateCompatibleDC(hDc);
+					var hCompatibleBitmap = WinApiInterop.CreateCompatibleBitmap(hDc, AppContext.Width, AppContext.Height);
+					var hOldBitmap = WinApiInterop.SelectObject(hCompatibleDc, hCompatibleBitmap);
+					var hBrush = WinApiInterop.CreateSolidBrush(AppContext.TransparentColor);
+					var rect = new RECT(0, 0, AppContext.Width, AppContext.Height);
 					WinApiInterop.FillRect(hCompatibleDc, ref rect, hBrush);
 					WinApiInterop.TransparentBlt(hCompatibleDc, 0, 0, AppContext.Width, AppContext.Height, hCompatibleDc, 0, 0,
 						AppContext.Width, AppContext.Height, AppContext.TransparentColor);
