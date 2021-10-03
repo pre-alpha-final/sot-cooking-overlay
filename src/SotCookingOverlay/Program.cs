@@ -12,7 +12,7 @@ namespace SotCookingOverlay
 			WinApiHelper.CreateOwnerWindow(windowClassEx, registerClassAtom);
 			var hWnd = WinApiHelper.CreatePopupWindow(windowClassEx, registerClassAtom);
 
-			AppContext.hWnd = hWnd;
+			AppContext.WindowHandle = hWnd;
 			var _ = Task.Run(AppContext.Tick);
 
 			WinApiHelper.MessageLoop();

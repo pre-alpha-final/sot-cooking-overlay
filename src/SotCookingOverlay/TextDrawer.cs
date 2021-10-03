@@ -40,6 +40,7 @@ namespace SotCookingOverlay
 			};
 			IntPtr hNewFont = WinApiInterop.CreateFontIndirect(logfont);
 			IntPtr hOldFont = WinApiInterop.SelectObject(hDc, hNewFont);
+			WinApiInterop.DeleteObject(hNewFont);
 			WinApiInterop.DeleteObject(hOldFont);
 			WinApiInterop.SetTextColor(hDc, color);
 			WinApiInterop.SetBkMode(hDc, WinApiInterop.TRANSPARENT);
