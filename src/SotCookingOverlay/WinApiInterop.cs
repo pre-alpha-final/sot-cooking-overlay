@@ -8,7 +8,7 @@ namespace SotCookingOverlay
 {
 	//typedef unsigned short ATOM;
 
-	delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+	public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
 	#region structs
 	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -230,7 +230,7 @@ namespace SotCookingOverlay
 	}
 	#endregion
 
-	public class WinAPI
+	public class WinApiInterop
 	{
 		#region consts
 		public const UInt32 WS_EX_TOPMOST = 0x00000008;

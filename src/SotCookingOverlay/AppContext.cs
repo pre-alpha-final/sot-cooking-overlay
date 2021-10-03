@@ -5,6 +5,12 @@ namespace SotCookingOverlay
 {
 	public static class AppContext
 	{
+		public static Int32 Width { get; set; } = 400;
+		public static Int32 Height { get; set; } = 200;
+		public static UInt32 TransparentColor { get; set; } = 1234;
+		public static Int32 TextBackgroundColor { get; set; } = 12345;
+		public static Int32 TextForegroundColor { get; set; } = 54321;
+
 		public static IntPtr hWnd { get; set; }
 		public static DateTimeOffset Start { get; set; }
 
@@ -26,7 +32,7 @@ namespace SotCookingOverlay
 				{
 					lastElapsedSeconds = elapsedSeconds;
 					MegRemaining = MegFull - elapsedSeconds;
-					WinAPI.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, RedrawWindowFlags.Invalidate | RedrawWindowFlags.Erase);
+					WinApiInterop.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, RedrawWindowFlags.Invalidate | RedrawWindowFlags.Erase);
 				}
 			}
 		}

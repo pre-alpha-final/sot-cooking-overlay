@@ -23,10 +23,10 @@ namespace SotCookingOverlay
 
 		private void InnerDrawText(IntPtr hWnd, IntPtr hDc, string text, int x, int y)
 		{
-			WinAPI.GetClientRect(hWnd, out var rect);
+			WinApiInterop.GetClientRect(hWnd, out var rect);
 			rect.Left = x;
 			rect.Top = y;
-			WinAPI.DrawText(hDc, text, -1, ref rect, WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
+			WinApiInterop.DrawText(hDc, text, -1, ref rect, WinApiInterop.DT_SINGLELINE | WinApiInterop.DT_NOCLIP);
 		}
 
 		private void SwapFont(IntPtr hDc, int color)
@@ -38,11 +38,11 @@ namespace SotCookingOverlay
 				lfWeight = 500,
 				lfQuality = 3,
 			};
-			IntPtr hNewFont = WinAPI.CreateFontIndirect(logfont);
-			IntPtr hOldFont = WinAPI.SelectObject(hDc, hNewFont);
-			WinAPI.DeleteObject(hOldFont);
-			WinAPI.SetTextColor(hDc, color);
-			WinAPI.SetBkMode(hDc, WinAPI.TRANSPARENT);
+			IntPtr hNewFont = WinApiInterop.CreateFontIndirect(logfont);
+			IntPtr hOldFont = WinApiInterop.SelectObject(hDc, hNewFont);
+			WinApiInterop.DeleteObject(hOldFont);
+			WinApiInterop.SetTextColor(hDc, color);
+			WinApiInterop.SetBkMode(hDc, WinApiInterop.TRANSPARENT);
 		}
 	}
 }
