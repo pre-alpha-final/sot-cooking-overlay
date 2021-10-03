@@ -7,9 +7,9 @@ namespace SotCookingOverlay
 {
 	class Program
 	{
-		const Int32 Width = 200;
-		const Int32 Height = 100;
-		const UInt32 TransparentColor = 12345678;
+		const Int32 Width = 400;
+		const Int32 Height = 200;
+		const UInt32 TransparentColor = 0; // 0 = black since CreateCompatibleBitmap would turn it to black anyway
 		const Int32 ForegroundColor = 54321;
 		const Int32 BackgroundColor = 12345;
 
@@ -36,7 +36,9 @@ namespace SotCookingOverlay
 				string.Empty, WinAPI.WS_POPUP, 0, 0, Width, Height, IntPtr.Zero, IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
 			WinAPI.SetLayeredWindowAttributes(hWnd, TransparentColor, 0, WinAPI.LWA_COLORKEY);
 			WinAPI.ShowWindow(hWnd, WinAPI.SW_NORMAL);
-			//WinAPI.UpdateWindow(hWnd);
+
+			AppContext.hWnd = hWnd;
+			var _ = Task.Run(AppContext.Tick);
 
 			while (WinAPI.GetMessage(out var msg, IntPtr.Zero, 0, 0) != 0)
 			{
@@ -50,21 +52,22 @@ namespace SotCookingOverlay
 			switch (msg)
 			{
 				case WinAPI.WM_PAINT:
-					// Bitmap refernce
-					//PAINTSTRUCT ps;
-					//HDC kon, pom;
-					//kon = BeginPaint(hwnd, &ps);
-					//pom = CreateCompatibleDC(kon);
-					//SelectObject(pom, this->bmp);
-					//BitBlt(kon, 0, 0, this->width, this->height, pom, 0, 0, SRCCOPY);
-					//DeleteDC(pom);
-					//EndPaint(hwnd, &ps);
-
 					IntPtr hDc = WinAPI.BeginPaint(hWnd, out var ps);
-					var textDrawer = new TextDrawer(BackgroundColor, ForegroundColor);
-					textDrawer.DrawText(hWnd, hDc, "Foo Bar", 20, 20);
-					WinAPI.EndPaint(hWnd, ref ps);
+					IntPtr compatibleDc = WinAPI.CreateCompatibleDC(hDc);
+					IntPtr compatibleBitmap = WinAPI.CreateCompatibleBitmap(hDc, Width, Height);
+					WinAPI.SelectObject(compatibleDc, compatibleBitmap);
 
+					var textDrawer = new TextDrawer(BackgroundColor, ForegroundColor);
+					textDrawer.DrawText(hWnd, compatibleDc, AppContext.MegText, 20, 20);
+
+					/*
+					 * Last param here should be TransparentColor not 0, but CreateCompatibleBitmap above
+					 * does not support transparency, so the originally transparent regions become 0 (black)
+					 */
+					WinAPI.TransparentBlt(hDc, 0, 0, Width, Height, compatibleDc, 0, 0, Width, Height, 0);
+					WinAPI.EndPaint(hWnd, ref ps);
+					WinAPI.DeleteDC(compatibleDc);
+					WinAPI.DeleteObject(compatibleBitmap);
 					break;
 
 				case WinAPI.WM_DESTROY:

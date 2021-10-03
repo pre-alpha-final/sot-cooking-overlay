@@ -191,6 +191,23 @@ namespace SotCookingOverlay
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
 		public string lfFaceName = string.Empty;
 	}
+
+	[Flags()]
+	public enum RedrawWindowFlags : uint
+	{
+		Invalidate = 0x1,
+		InternalPaint = 0x2,
+		Erase = 0x4,
+		Validate = 0x8,
+		NoInternalPaint = 0x10,
+		NoErase = 0x20,
+		NoChildren = 0x40,
+		AllChildren = 0x80,
+		UpdateNow = 0x100,
+		EraseNow = 0x200,
+		Frame = 0x400,
+		NoFrame = 0x800
+	}
 	#endregion
 
 	public class WinAPI
@@ -242,7 +259,7 @@ namespace SotCookingOverlay
 		public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
 		[DllImport("user32.dll")]
-		public static extern bool UpdateWindow(IntPtr hWnd);
+		public static extern bool RedrawWindow(IntPtr hWnd, IntPtr lprcUpdate, IntPtr hrgnUpdate, RedrawWindowFlags flags);
 
 		[DllImport("user32.dll")]
 		public static extern sbyte GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
@@ -290,6 +307,19 @@ namespace SotCookingOverlay
 		[DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool DeleteObject([In] IntPtr hObject);
+
+		[DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC", SetLastError = true)]
+		public static extern IntPtr CreateCompatibleDC([In] IntPtr hdc);
+
+		[DllImport("Msimg32.dll", EntryPoint = "TransparentBlt", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool TransparentBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidthDst, int nHeightDst, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int nWidthSrc, int nHeightSrc, uint transparentColor);
+
+		[DllImport("gdi32.dll", EntryPoint = "CreateCompatibleBitmap")]
+		public static extern IntPtr CreateCompatibleBitmap([In] IntPtr hdc, int nWidth, int nHeight);
+
+		[DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+		public static extern bool DeleteDC([In] IntPtr hdc);
 		#endregion
 	}
 }

@@ -21,6 +21,14 @@ namespace SotCookingOverlay
 			InnerDrawText(hWnd, hDc, text, x, y);
 		}
 
+		private void InnerDrawText(IntPtr hWnd, IntPtr hDc, string text, int x, int y)
+		{
+			WinAPI.GetClientRect(hWnd, out var rect);
+			rect.Left = x;
+			rect.Top = y;
+			WinAPI.DrawText(hDc, text, -1, ref rect, WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
+		}
+
 		private void SwapFont(IntPtr hDc, int color)
 		{
 			LOGFONT logfont = new LOGFONT
@@ -35,14 +43,6 @@ namespace SotCookingOverlay
 			WinAPI.DeleteObject(hOldFont);
 			WinAPI.SetTextColor(hDc, color);
 			WinAPI.SetBkMode(hDc, WinAPI.TRANSPARENT);
-		}
-
-		private void InnerDrawText(IntPtr hWnd, IntPtr hDc, string text, int x, int y)
-		{
-			WinAPI.GetClientRect(hWnd, out var rect);
-			rect.Left = x;
-			rect.Top = y;
-			WinAPI.DrawText(hDc, text, -1, ref rect, WinAPI.DT_SINGLELINE | WinAPI.DT_NOCLIP);
 		}
 	}
 }
