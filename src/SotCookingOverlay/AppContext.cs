@@ -15,12 +15,17 @@ namespace SotCookingOverlay
 		public static async Task Tick()
 		{
 			Start = DateTimeOffset.UtcNow;
+			var lastElapsedSeconds = 0;
 			while (true)
 			{
 				await Task.Delay(100);
-				MegRemaining = MegFull - (int)(DateTimeOffset.UtcNow - Start).TotalSeconds;
-
-				WinAPI.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, RedrawWindowFlags.Invalidate | RedrawWindowFlags.Erase);
+				var elapsedSeconds = (int)(DateTimeOffset.UtcNow - Start).TotalSeconds;
+				if (elapsedSeconds != lastElapsedSeconds)
+				{
+					lastElapsedSeconds = elapsedSeconds;
+					MegRemaining = MegFull - elapsedSeconds;
+					WinAPI.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, RedrawWindowFlags.Invalidate | RedrawWindowFlags.Erase);
+				}
 			}
 		}
 	}
