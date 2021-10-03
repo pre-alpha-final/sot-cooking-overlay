@@ -28,6 +28,17 @@ namespace SotCookingOverlay
 			return (windowClassEx, registerClassAtom);
 		}
 
+		public static IntPtr CreateOwnerWindow(WNDCLASSEX windowClassEx, UInt16 registerClassAtom)
+		{
+			IntPtr hWnd = WinApiInterop.CreateWindowEx((int)(WinApiInterop.WS_EX_TOPMOST | WinApiInterop.WS_EX_TRANSPARENT | WinApiInterop.WS_EX_LAYERED),
+				registerClassAtom, AppContext.Title, WinApiInterop.WS_POPUP | WinApiInterop.WS_SYSMENU | WinApiInterop.WS_CAPTION, 0, 0, 0, 0, IntPtr.Zero,
+				IntPtr.Zero, windowClassEx.hInstance, IntPtr.Zero);
+			WinApiInterop.SetLayeredWindowAttributes(hWnd, AppContext.TransparentColor, 0, WinApiInterop.LWA_COLORKEY);
+			WinApiInterop.ShowWindow(hWnd, WinApiInterop.SW_NORMAL);
+
+			return hWnd;
+		}
+
 		public static IntPtr CreatePopupWindow(WNDCLASSEX windowClassEx, UInt16 registerClassAtom)
 		{
 			IntPtr hWnd = WinApiInterop.CreateWindowEx((int)(WinApiInterop.WS_EX_TOPMOST | WinApiInterop.WS_EX_TRANSPARENT | WinApiInterop.WS_EX_LAYERED), registerClassAtom,

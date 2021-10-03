@@ -5,6 +5,7 @@ namespace SotCookingOverlay
 {
 	public static class AppContext
 	{
+		public static string Title { get; set; } = "SoT Cooking Overlay";
 		public static Int32 Width { get; set; } = 400;
 		public static Int32 Height { get; set; } = 200;
 		public static UInt32 TransparentColor { get; set; } = 1234;

@@ -9,6 +9,7 @@ namespace SotCookingOverlay
 		{
 			var windowProcedureWrapper = new WindowProcedureWrapper(OnPaint);
 			(WNDCLASSEX windowClassEx, ushort registerClassAtom) = WinApiHelper.RegisterWindowClass(windowProcedureWrapper.WindowProcedure);
+			WinApiHelper.CreateOwnerWindow(windowClassEx, registerClassAtom);
 			var hWnd = WinApiHelper.CreatePopupWindow(windowClassEx, registerClassAtom);
 
 			AppContext.hWnd = hWnd;

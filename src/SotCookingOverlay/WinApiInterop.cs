@@ -237,6 +237,8 @@ namespace SotCookingOverlay
 		public const UInt32 WS_EX_TRANSPARENT = 0x00000020;
 		public const UInt32 WS_EX_LAYERED = 0x80000;
 		public const UInt32 WS_POPUP = 0x80000000;
+		public const UInt32 WS_SYSMENU = 0x00080000;
+		public const UInt32 WS_CAPTION = 0x00C00000;
 		public const UInt32 CS_VREDRAW = 1;
 		public const UInt32 CS_HREDRAW = 2;
 		public const UInt32 LWA_COLORKEY = 1;
