@@ -6,7 +6,7 @@ namespace SotCookingOverlay
 	public static class AppContext
 	{
 		public static string Title { get; set; } = "SoT Cooking Overlay";
-		public static string TargetTitle { get; set; } = "new 1 - Notepad++";
+		public static string TargetTitle { get; set; } = "*new 1 - Notepad++";
 		public static int Width { get; set; } = 400;
 		public static int Height { get; set; } = 200;
 		public static uint TransparentColor { get; set; } = 1234;
@@ -14,21 +14,36 @@ namespace SotCookingOverlay
 		public static int TextForegroundColor { get; set; } = 54321;
 
 		public static IntPtr WindowHandle { get; set; }
+		public static bool IsForeground { get; set; }
 		public static bool IsActive { get; set; }
 		public static DateTimeOffset StartTime { get; set; }
 
 		public static int MegFull => 40;
 		public static int MegRemaining { get; set; }
-		public static string MegText => IsActive ? $"Meg: {MegRemaining}s" : string.Empty;
+		public static string MegText => IsForeground && IsActive ? $"Meg: {MegRemaining}s" : string.Empty;
 
 		public static async Task Tick()
 		{
-			StartTime = DateTimeOffset.UtcNow;
 			while (true)
 			{
+				CheckKey();
 				Reposition();
 				UpdateContent();
 				await Task.Delay(10);
+			}
+		}
+
+		private static void CheckKey()
+		{
+			if (DateTimeOffset.UtcNow - StartTime < TimeSpan.FromMilliseconds(250))
+			{
+				return;
+			}
+
+			if ((WinApiInterop.GetKeyState(VirtualKeyStates.VK_NUMPAD0) & 0x010000) != 0)
+			{
+				StartTime = DateTimeOffset.UtcNow;
+				IsActive = !IsActive;
 			}
 		}
 
@@ -38,7 +53,7 @@ namespace SotCookingOverlay
 			if (targetWindow != IntPtr.Zero)
 			{
 				var foregroundWindow = WinApiInterop.GetForegroundWindow();
-				IsActive = targetWindow == foregroundWindow;
+				IsForeground = targetWindow == foregroundWindow;
 				if (targetWindow == foregroundWindow)
 				{
 					WinApiInterop.GetWindowRect(targetWindow, out var rect);

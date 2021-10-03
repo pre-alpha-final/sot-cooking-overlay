@@ -248,6 +248,12 @@ namespace SotCookingOverlay
 		IgnoreZOrder = 0x0004,
 		ShowWindow = 0x0040,
 	}
+
+	public enum VirtualKeyStates : int
+	{
+		VK_NUMPAD0 = 0x60,
+		// cut
+	}
 	#endregion
 
 	public class WinApiInterop
@@ -383,6 +389,9 @@ namespace SotCookingOverlay
 
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, SetWindowPosFlags uFlags);
+
+		[DllImport("USER32.dll")]
+		public static extern short GetKeyState(VirtualKeyStates nVirtKey);
 		#endregion
 	}
 }
