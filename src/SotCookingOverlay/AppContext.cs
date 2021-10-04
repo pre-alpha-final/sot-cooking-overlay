@@ -62,16 +62,20 @@ namespace SotCookingOverlay
 		private static void Reposition()
 		{
 			var targetWindow = WinApiInterop.FindWindow(null, TargetTitle);
-			if (targetWindow != IntPtr.Zero)
+			if (targetWindow == IntPtr.Zero)
 			{
-				var foregroundWindow = WinApiInterop.GetForegroundWindow();
-				IsForeground = targetWindow == foregroundWindow;
-				if (targetWindow == foregroundWindow)
-				{
-					WinApiInterop.GetWindowRect(targetWindow, out var rect);
-					WinApiInterop.SetWindowPos(WindowHandle, (IntPtr)WinApiInterop.HWND_TOPMOST, rect.Right - Width - 10,
-						rect.Top + 10, Width, Height, SetWindowPosFlags.ShowWindow);
-				}
+				IsActive = false;
+				IsForeground = false;
+				return;
+			}
+
+			var foregroundWindow = WinApiInterop.GetForegroundWindow();
+			IsForeground = targetWindow == foregroundWindow;
+			if (targetWindow == foregroundWindow)
+			{
+				WinApiInterop.GetWindowRect(targetWindow, out var rect);
+				WinApiInterop.SetWindowPos(WindowHandle, (IntPtr)WinApiInterop.HWND_TOPMOST, rect.Right - Width - 10,
+					rect.Top + 10, Width, Height, SetWindowPosFlags.ShowWindow);
 			}
 		}
 
