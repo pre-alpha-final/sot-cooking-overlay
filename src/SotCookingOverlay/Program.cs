@@ -20,8 +20,12 @@ namespace SotCookingOverlay
 
 		private static void OnPaint(IntPtr hWnd, IntPtr hDc)
 		{
+			var height = 50;
 			var textDrawer = new TextDrawer(AppContext.TextBackgroundColor, AppContext.TextForegroundColor);
-			textDrawer.DrawText(hWnd, hDc, AppContext.MegText, 20, 20);
+			textDrawer.DrawText(hWnd, hDc, AppContext.FishText, 0, height * 0);
+			textDrawer.DrawText(hWnd, hDc, AppContext.TrophyFishText, 0, height * 1);
+			textDrawer.DrawText(hWnd, hDc, AppContext.MeatText, 0, height * 2);
+			textDrawer.DrawText(hWnd, hDc, AppContext.KrakenMegText, 0, height * 3);
 		}
 	}
 }
