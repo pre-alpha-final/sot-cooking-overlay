@@ -18,19 +18,19 @@ namespace SotCookingOverlay
 		public static bool IsActive { get; set; }
 		public static DateTimeOffset StartTime { get; set; }
 
-		public static int FishFull => 45;
+		public static int FishFull => 40;
 		public static int FishRemaining { get; set; }
 		public static string FishText => IsForeground && IsActive ? $"Fish: {FishRemaining}s" : string.Empty;
 
-		public static int TrophyFishFull => 95;
+		public static int TrophyFishFull => 90;
 		public static int TrophyFishRemaining { get; set; }
 		public static string TrophyFishText => IsForeground && IsActive ? $"Trophy fish: {TrophyFishRemaining}s" : string.Empty;
 
-		public static int MeatFull => 65;
+		public static int MeatFull => 60;
 		public static int MeatRemaining { get; set; }
 		public static string MeatText => IsForeground && IsActive ? $"Meat: {MeatRemaining}s" : string.Empty;
 
-		public static int KrakenMegFull => 125;
+		public static int KrakenMegFull => 120;
 		public static int KrakenMegRemaining { get; set; }
 		public static string KrakenMegText => IsForeground && IsActive ? $"Krak and Meg: {KrakenMegRemaining}s" : string.Empty;
 
